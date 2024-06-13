@@ -18,7 +18,9 @@ test.beforeEach(async ({ page }) => {
 });
 
 test("Your Test", async ({ page }) => {
-  ...
+  await page.getByRole("button", { name: "Log In" }).click();
+  await page.getByRole("button", { name: "Choose Wallet" }).click();
+  await page.getByRole("menuitem", { name: "Mock Wallet" }).click();
 });
 ```
 
