@@ -1,19 +1,35 @@
 import type { Page } from "@playwright/test";
-import { privateKeyWalletRequest } from "./privateKeyWalletRequest";
+import { Wallet, createWallet } from "./createWallet";
+import { LocalAccount, Transport } from "viem";
+import { randomUUID } from "crypto";
 
-export async function installMockWallet(page: Page, privateKey: `0x${string}`) {
+let wallets: Map<string, Wallet> = new Map();
+
+export async function installMockWallet({
+  page,
+  account,
+  transport,
+}: {
+  page: Page;
+  account: LocalAccount;
+  transport: Transport;
+}) {
   // Connecting the browser context to the Node.js playwright context
   await page.exposeFunction("eip1193Request", eip1193Request);
 
+  // Everytime we call installMockWallet, we create a new uuid to identify the wallet.
+  const uuid = randomUUID();
+  wallets.set(uuid, createWallet(account, transport));
+
   await page.addInitScript(
-    ({ privateKey }) => {
+    ({ uuid }) => {
       // This function needs to be declared in the browser context
-      function announceMockWallet(privateKey: `0x${string}`) {
+      function announceMockWallet() {
         const provider: EIP1193Provider = {
           request: async (request) => {
             return await eip1193Request({
               ...request,
-              privateKey,
+              uuid,
             });
           },
           on: () => {},
@@ -21,7 +37,7 @@ export async function installMockWallet(page: Page, privateKey: `0x${string}`) {
         };
 
         const info: EIP6963ProviderInfo = {
-          uuid: "350670db-19fa-4704-a166-e52e178b59d2",
+          uuid,
           name: "Mock Wallet",
           icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'/>",
           rdns: "com.example.mock-wallet",
@@ -34,13 +50,13 @@ export async function installMockWallet(page: Page, privateKey: `0x${string}`) {
         window.dispatchEvent(announceEvent);
       }
 
-      announceMockWallet(privateKey);
+      announceMockWallet();
 
       window.addEventListener("eip6963:requestProvider", () => {
-        announceMockWallet(privateKey);
+        announceMockWallet();
       });
     },
-    { privateKey },
+    { uuid },
   );
 }
 
@@ -68,17 +84,20 @@ export interface EIP6963ProviderDetail {
 async function eip1193Request({
   method,
   params,
-  privateKey,
+  uuid,
 }: {
   method: string;
   params?: Array<unknown>;
-  privateKey: `0x${string}`;
+  uuid: string;
 }) {
-  const result = await privateKeyWalletRequest({
+  const wallet = wallets.get(uuid);
+  if (wallet == null) throw new Error("Account or transport not found");
+
+  const result = await wallet.request({
     method,
     params,
-    privateKey,
   });
+
   console.log("eip1193Request", method, params, result);
   return result;
 }

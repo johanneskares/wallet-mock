@@ -1,27 +1,41 @@
 {
-  "name": "wallet-mock",
-  "version": "0.1.0",
-  "description": "Mock Web3 Browser wallets, like Metamask, in Playwright tests",
+  "name": "@johanneskares/wallet-mock",
+  "version": "0.1.1",
+  "description": "Mock Web3 Browser wallets, like Metamask, in Playwright tests.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "web3",
+    "wallet",
+    "mock",
+    "playwright",
+    "metamask",
+    "ethereum",
+    "dapp",
+    "testing"
+  ],
+  "author": "Johannes Kares",
   "license": "ISC",
   "devDependencies": {
     "@playwright/test": "^1.44.1",
     "@types/node": "^20.14.2",
     "prettier": "^3.3.2",
-    "typescript": "^5.4.5"
-  },
-  "namespace": "@johanneskares",
-  "dependencies": {
+    "typescript": "^5.4.5",
     "viem": "^2.13.8"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/johanneskares/wallet-mock.git"
+  },
+  "namespace": "@johanneskares",
+  "dependencies": {},
   "peerDependencies": {
-    "@playwright/test": "^1.44.1"
+    "@playwright/test": "^1.44.1",
+    "viem": "^2.13.8"
   },
   "scripts": {
     "build": "tsc",
+    "publish": "npm publish --access public",
     "dev": "tsc -W",
     "test": "playwright test",
     "test-ui": "playwright test --ui"

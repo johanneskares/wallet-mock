@@ -1,11 +1,16 @@
 import { expect, test } from "@playwright/test";
-import { installMockWallet } from "./../src/playwright";
+import { installMockWallet } from "./../src/installMockWallet";
+import { privateKeyToAccount } from "viem/accounts";
+import { http } from "viem";
 
 test.beforeEach(async ({ page }) => {
-  await installMockWallet(
+  await installMockWallet({
     page,
-    "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80",
-  );
+    account: privateKeyToAccount(
+      "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80",
+    ),
+    transport: http(),
+  });
 });
 
 test("talentir", async ({ page }) => {
@@ -23,7 +28,7 @@ test("talentir", async ({ page }) => {
   await page.goto("https://dev.talentir.com/dashboard/wallet");
 
   // wait for 10 seconds
-  await page.waitForTimeout(10000);
+  await page.waitForTimeout(2000);
 });
 
 test("jumper", async ({ page }) => {
@@ -38,5 +43,5 @@ test("jumper", async ({ page }) => {
   // await page.getByRole("menuitem", { name: "Mock Wallet" }).click();
 
   // wait for 10 seconds
-  await page.waitForTimeout(10000);
+  await page.waitForTimeout(2000);
 });
