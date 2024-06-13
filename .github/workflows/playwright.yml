@@ -28,9 +28,9 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 30
-      - name: Bump version and publish
+      - name: Publish the Package
         run: |
           npm run build
-          npm run publish
+          npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
