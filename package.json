@@ -1,6 +1,6 @@
 {
   "name": "@johanneskares/wallet-mock",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Mock Web3 Browser wallets, like Metamask, in Playwright tests.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
