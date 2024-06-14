@@ -22,6 +22,8 @@ jobs:
         run: npx playwright install --with-deps
       - name: Run Playwright tests
         run: npx playwright test
+        env:
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -33,5 +35,4 @@ jobs:
           npm run build
           npm publish --access public
         env:
-          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
