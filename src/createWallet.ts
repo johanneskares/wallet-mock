@@ -71,7 +71,7 @@ export function createWallet(account: LocalAccount, transport: Transport) {
           params: params as any,
         });
       } catch (error) {
-        console.error("error", error);
+        console.error("Error within Mock Wallet:", error);
         return null;
       }
     },
