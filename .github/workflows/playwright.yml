@@ -33,4 +33,5 @@ jobs:
           npm run build
           npm publish --access public
         env:
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
