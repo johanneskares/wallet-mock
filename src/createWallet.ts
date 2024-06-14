@@ -28,7 +28,7 @@ export function createWallet(account: LocalAccount, transport: Transport) {
         });
 
         if (method === "eth_accounts" || method === "eth_requestAccounts") {
-          return client.getAddresses();
+          return await client.getAddresses();
         }
 
         if (
@@ -44,10 +44,25 @@ export function createWallet(account: LocalAccount, transport: Transport) {
         }
 
         if (method === "personal_sign") {
-          return client.account.signMessage({
+          return await client.account.signMessage({
             message: {
               raw: params?.[0] as Hex,
             },
+          });
+        }
+
+        if (method === "eth_sendTransaction") {
+          const from = (params?.[0] as any).from;
+          if (from !== account.address) throw new Error("Invalid from address");
+
+          return await client.sendTransaction({
+            to: (params?.[0] as any).to,
+            data: (params?.[0] as any).data,
+            gas: (params?.[0] as any).gas,
+            gasPrice: (params?.[0] as any).gasPrice,
+            value: (params?.[0] as any).value,
+            maxFeePerGas: (params?.[0] as any).maxFeePerGas,
+            maxPriorityFeePerGas: (params?.[0] as any).maxPriorityFeePerGas,
           });
         }
 

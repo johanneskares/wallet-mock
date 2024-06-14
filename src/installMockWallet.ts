@@ -93,11 +93,13 @@ async function eip1193Request({
   const wallet = wallets.get(uuid);
   if (wallet == null) throw new Error("Account or transport not found");
 
+  // console.log("eip1193Request", method, params);
+
   const result = await wallet.request({
     method,
     params,
   });
 
-  console.log("eip1193Request", method, params, result);
+  // console.log("eip1193Result", result);
   return result;
 }
