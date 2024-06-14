@@ -1,6 +1,6 @@
 {
   "name": "@johanneskares/wallet-mock",
-  "version": "0.1.5",
+  "version": "0.0.0-semantically-released",
   "description": "Mock Web3 Browser wallets, like Metamask, in Playwright tests.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -21,6 +21,7 @@
     "@types/node": "^20.14.2",
     "dotenv": "^16.4.5",
     "prettier": "^3.3.2",
+    "semantic-release": "^24.0.0",
     "typescript": "^5.4.5",
     "viem": "^2.13.8"
   },
