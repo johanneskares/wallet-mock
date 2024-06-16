@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { installMockWallet } from "./../src/installMockWallet";
 import { privateKeyToAccount } from "viem/accounts";
-import { http, isHex } from "viem";
+import { custom, http, isHex } from "viem";
 
 test.beforeEach(async ({ page }) => {
   await installMockWallet({
@@ -9,7 +9,14 @@ test.beforeEach(async ({ page }) => {
     account: privateKeyToAccount(
       isHex(process.env.PRIVATE_KEY) ? process.env.PRIVATE_KEY : "0x",
     ),
-    transport: http(),
+    transport: (config) => {
+      return custom({
+        request: async ({ method, params }) => {
+          console.log("LOG", method, params);
+          return await http()(config).request({ method, params });
+        },
+      })(config);
+    },
   });
 });
 
