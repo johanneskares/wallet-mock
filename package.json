@@ -38,6 +38,7 @@
     "build": "tsc",
     "dev": "tsc -W",
     "test": "playwright test",
-    "test-ui": "playwright test --ui"
+    "test-ui": "playwright test --ui",
+    "install-conventional-commit": "curl -o- https://raw.githubusercontent.com/tapsellorg/conventional-commits-git-hook/master/scripts/install.sh | sh"
   }
 }
