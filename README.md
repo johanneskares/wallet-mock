@@ -7,6 +7,11 @@ Fully functional end-to-end (E2E) tests for your decentralized application (dApp
 - All wallet actions are pre-approved by default, eliminating the need for user interaction
 
 ## Quickstart
+### Install
+```shell
+npm install -D @johanneskares/mock-wallet
+```
+### Example
 ```ts
 import { test } from "@playwright/test";
 import { installMockWallet } from "@johanneskares/mock-wallet";
@@ -31,7 +36,7 @@ test("Your Test", async ({ page }) => {
 ```
 > **Note:** This setup will execute actual transactions on the blockchain without user intervention using the provided Private Key.
 
-### Uniswap Example
+### Uniswap Demo
 The Mock Wallet will show up as an EIP-6963 compatible wallet.
 
 <img width="500" alt="Screenshot Uniswap" src="https://github.com/johanneskares/wallet-mock/assets/1416628/b3d31df0-6273-42da-b00f-63bc8294a592">
