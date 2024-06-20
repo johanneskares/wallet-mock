@@ -14,7 +14,7 @@ npm install -D @johanneskares/wallet-mock
 ### Example
 ```ts
 import { test } from "@playwright/test";
-import { installMockWallet } from "@johanneskares/mock-wallet";
+import { installMockWallet } from "@johanneskares/wallet-mock";
 import { privateKeyToAccount } from "viem/accounts";
 import { http } from "viem";
 
