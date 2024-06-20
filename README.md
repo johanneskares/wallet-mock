@@ -9,7 +9,7 @@ Fully functional end-to-end (E2E) tests for your decentralized application (dApp
 ## Quickstart
 ### Install
 ```shell
-npm install -D @johanneskares/mock-wallet
+npm install -D @johanneskares/wallet-mock
 ```
 ### Example
 ```ts
