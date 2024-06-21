@@ -1,10 +1,11 @@
 # Wallet Mock
-Fully functional end-to-end (E2E) tests for your decentralized application (dApp). This package installs a fully operational Web3 Wallet into the [Playwright](https://github.com/microsoft/playwright) Browser Context. The wallet can be configured to execute on the blockchain or return mock responses. It is discoverable through [EIP-6963](https://eips.ethereum.org/EIPS/eip-6963) and leverages [viem](https://github.com/wevm/viem) `Account` and `Transport` interfaces for easy customization.
+Fully functional end-to-end (E2E) tests for your decentralized application (dApp). This package installs a fully operational, headless Web3 Wallet into the [Playwright](https://github.com/microsoft/playwright) Browser Context. The wallet can be configured to execute on the blockchain or return mock responses. It is discoverable through [EIP-6963](https://eips.ethereum.org/EIPS/eip-6963) and leverages [viem](https://github.com/wevm/viem) `Account` and `Transport` interfaces for easy customization.
 
 ## Features
 - Create comprehensive E2E tests for your dApps, including real blockchain transactions
 - Mock specific calls or all calls to the wallet
 - All wallet actions are pre-approved by default, eliminating the need for user interaction
+- All wallet interactions are headless, meaning, no user interaction is required. You should be testing your dApp, not the wallet
 
 ## Quickstart
 ### Install
