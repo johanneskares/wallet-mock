@@ -9,12 +9,12 @@ Fully functional end-to-end (E2E) tests for your decentralized application (dApp
 ## Quickstart
 ### Install
 ```shell
-npm install -D @johanneskares/mock-wallet
+npm install -D @johanneskares/wallet-mock
 ```
 ### Example
 ```ts
 import { test } from "@playwright/test";
-import { installMockWallet } from "@johanneskares/mock-wallet";
+import { installMockWallet } from "@johanneskares/wallet-mock";
 import { privateKeyToAccount } from "viem/accounts";
 import { http } from "viem";
 
