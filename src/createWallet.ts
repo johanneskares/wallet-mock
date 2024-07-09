@@ -66,6 +66,10 @@ export function createWallet(account: Account, transports: Map<number, Transport
           });
         }
 
+        if(method === "eth_chainId") {
+          return chainId;
+        }
+
         return await client.request({
           method: method as any,
           params: params as any,

@@ -1,5 +1,5 @@
 {
-  "name": "@johanneskares/wallet-mock",
+  "name": "@bozhkovatanas/wallet-mock",
   "version": "0.0.0-semantically-released",
   "description": "Mock Web3 Browser wallets, like Metamask, in Playwright tests.",
   "main": "dist/index.js",
@@ -27,9 +27,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/johanneskares/wallet-mock.git"
+    "url": "git+https://github.com/atanasbozhkov/wallet-mock.git"
   },
-  "namespace": "@johanneskares",
+  "namespace": "@bozhkovatanas",
   "peerDependencies": {
     "@playwright/test": "^1.44.1",
     "viem": "^2.13.8"
