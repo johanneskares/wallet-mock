@@ -1,17 +1,15 @@
 import {
-  LocalAccount,
   Hex,
   Transport,
   createWalletClient,
-  fromHex,
+  fromHex, publicActions, Account, http,
 } from "viem";
 import * as chains from "viem/chains";
 
 export type Wallet = ReturnType<typeof createWallet>;
 
-export function createWallet(account: LocalAccount, transport: Transport) {
+export function createWallet(account: Account, transports: Map<number, Transport>) {
   let chainId: string | undefined;
-
   return {
     request: async ({
       method,
@@ -21,11 +19,12 @@ export function createWallet(account: LocalAccount, transport: Transport) {
       params?: Array<unknown>;
     }) => {
       try {
+        let chain = getChain(chainId);
         const client = createWalletClient({
           account,
-          chain: getChain(chainId),
-          transport,
-        });
+          chain: chain,
+          transport: transports.get(chain.id) ?? http(),
+        }).extend(publicActions);
 
         if (method === "eth_accounts" || method === "eth_requestAccounts") {
           return await client.getAddresses();
@@ -44,6 +43,7 @@ export function createWallet(account: LocalAccount, transport: Transport) {
         }
 
         if (method === "personal_sign") {
+          if (!client.account.signMessage) throw new Error("Method `personal_sign` not supported by account");
           return await client.account.signMessage({
             message: {
               raw: params?.[0] as Hex,
