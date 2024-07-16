@@ -1,28 +1,30 @@
-import type {BrowserContext} from "@playwright/test";
+import type {BrowserContext, Page} from "@playwright/test";
 import {createWallet, Wallet} from "./createWallet";
 import {LocalAccount, Transport} from "viem";
 import {randomUUID} from "crypto";
+import {Prettify} from "viem/chains";
 
 let wallets: Map<string, Wallet> = new Map();
+type InstallMockWalletParams = {
+  account: LocalAccount,
+  transports: Map<number, Transport>,
+}
 
-export async function installMockWallet({
-  browserContext,
-  account,
-  transports,
-}: {
-  browserContext: BrowserContext;
-  account: LocalAccount;
-  transports: Map<number, Transport>;
-}) {
+type InstallMockWalletParamsWithBrowserContext = Prettify<InstallMockWalletParams & { browserContext: BrowserContext }>;
+type InstallMockWalletParamsWithPage = Prettify<InstallMockWalletParams & { page: Page }>;
+
+export async function installMockWallet(params: InstallMockWalletParamsWithBrowserContext | InstallMockWalletParamsWithPage) {
+    const { account, transports } = params;
+    const browserOrPage = "browserContext" in params ? params.browserContext : params.page;
   // Connecting the browser context to the Node.js playwright context
-  await browserContext.exposeFunction("eip1193Request", eip1193Request);
+  await browserOrPage.exposeFunction("eip1193Request", eip1193Request);
 
   // Everytime we call installMockWallet, we create a new uuid to identify the wallet.
   const uuid = randomUUID();
   wallets.set(uuid, createWallet(account, transports));
 
-  await browserContext.addInitScript(
-    ({ uuid }) => {
+  await browserOrPage.addInitScript(
+    ({ uuid }: { uuid: ReturnType<typeof randomUUID> }) => {
       // This function needs to be declared in the browser context
       function announceMockWallet() {
         const provider: EIP1193Provider = {
@@ -49,6 +51,8 @@ export async function installMockWallet({
         });
         window.dispatchEvent(announceEvent);
       }
+
+      // Wait for the DOM to be ready before announcing the wallet - useful for auto-connect flows
       window.addEventListener("DOMContentLoaded", () => {
         announceMockWallet();
       });
