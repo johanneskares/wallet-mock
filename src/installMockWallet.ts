@@ -1,27 +1,27 @@
-import type { Page } from "@playwright/test";
-import { Wallet, createWallet } from "./createWallet";
-import {Account, LocalAccount, Transport} from "viem";
-import { randomUUID } from "crypto";
+import type {BrowserContext} from "@playwright/test";
+import {createWallet, Wallet} from "./createWallet";
+import {LocalAccount, Transport} from "viem";
+import {randomUUID} from "crypto";
 
 let wallets: Map<string, Wallet> = new Map();
 
 export async function installMockWallet({
-  page,
+  browserContext,
   account,
   transports,
 }: {
-  page: Page;
+  browserContext: BrowserContext;
   account: LocalAccount;
   transports: Map<number, Transport>;
 }) {
   // Connecting the browser context to the Node.js playwright context
-  await page.exposeFunction("eip1193Request", eip1193Request);
+  await browserContext.exposeFunction("eip1193Request", eip1193Request);
 
   // Everytime we call installMockWallet, we create a new uuid to identify the wallet.
   const uuid = randomUUID();
   wallets.set(uuid, createWallet(account, transports));
 
-  await page.addInitScript(
+  await browserContext.addInitScript(
     ({ uuid }) => {
       // This function needs to be declared in the browser context
       function announceMockWallet() {
