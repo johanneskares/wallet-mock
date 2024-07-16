@@ -49,6 +49,9 @@ export async function installMockWallet({
         });
         window.dispatchEvent(announceEvent);
       }
+      window.addEventListener("DOMContentLoaded", () => {
+        announceMockWallet();
+      });
 
       announceMockWallet();
 
