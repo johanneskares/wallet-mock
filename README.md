@@ -35,9 +35,7 @@ const ETHEREUM_RPC_URL = `https://YOUR_ETHEREUM_RPC_URL`;
 const ARBITRUM_RPC_URL = `https://YOUR_ARBITRUM_RPC_URL`;
 
 test.beforeEach(async ({page}) => {
-    const transports = new Map < number, Transport
->
-    ();
+    const transports = new Map<number, Transport>();
     transports.set(1, http(ETHEREUM_RPC_URL));
     transports.set(42161, http(ARBITRUM_RPC_URL));
 
@@ -106,6 +104,6 @@ To test with a local Hardhat node:
      account: privateKeyToAccount(
        "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80",
      ),
-     transport: http("http://127.0.0.1:8545"),
+     transports: new Map(1, http("http://127.0.0.1:8545")),
    });
    ```
