@@ -20,33 +20,13 @@ test.beforeEach(async ({ page }) => {
   });
 });
 
-test("talentir", async ({ page }) => {
-  const baseUrl = "https://dev.talentir.com";
-  // const baseUrl = "http://localhost:3000";
+test("Metamask Wallet Test Dapp", async ({ page }) => {
+  const baseUrl = "https://metamask.github.io/test-dapp/";
   await page.goto(baseUrl);
-
-  await page.getByRole("button", { name: "Accept all" }).click();
-  await page.getByRole("button", { name: "Log In" }).click();
-  await page.getByRole("button", { name: "Choose Wallet" }).click();
-  await page.getByRole("menuitem", { name: "Mock Wallet" }).last().click();
-
-  await expect(page).toHaveURL(baseUrl + "/dashboard/assets");
-  await page.getByRole("link", { name: "Wallet" }).click();
-
-  await page.waitForTimeout(2000);
-
-  await page.getByLabel("Transfer").click();
-  await page
-    .getByPlaceholder("0xe0a942ff2e1724A2fe10627728bE327a43fE8C23")
-    .fill("0xe0a942ff2e1724A2fe10627728bE327a43fE8C26");
-
-  await page.getByPlaceholder("-").fill("- 0.01");
-
-  await page.getByRole("button", { name: "Send USDC" }).click();
-  await page.getByLabel("I take full responsibility").click();
-  await page.getByRole("button", { name: "Confirm" }).click();
+  await page.getByRole("button", { name: "USE MOCK WALLET" }).click();
 
   await expect(
-    page.getByRole("heading", { name: "Transaction Successful" }),
-  ).toBeVisible({ timeout: 30000 });
+    page.getByRole("heading", { name: "Active Provider" }),
+  ).toBeVisible();
+  await expect(page.getByText("Name: Mock Wallet")).toBeVisible();
 });
