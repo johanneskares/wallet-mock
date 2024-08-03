@@ -81,11 +81,13 @@ To test with a local Hardhat node:
 
 2. Connect the Mock Wallet to your Hardhat Node:
    ```ts
+   import { hardhat } from "viem/chains";
+
    await installMockWallet({
      page,
      account: privateKeyToAccount(
        "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80",
      ),
-     transport: http("http://127.0.0.1:8545"),
+     defaultChain: hardhat,
    });
    ```
