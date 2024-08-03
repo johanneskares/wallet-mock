@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test";
 import { installMockWallet } from "./../src/installMockWallet";
 import { privateKeyToAccount } from "viem/accounts";
 import { custom, http, isHex } from "viem";
+import { sepolia } from "viem/chains";
 
 test.beforeEach(async ({ page }) => {
   await installMockWallet({
@@ -9,13 +10,21 @@ test.beforeEach(async ({ page }) => {
     account: privateKeyToAccount(
       isHex(process.env.PRIVATE_KEY) ? process.env.PRIVATE_KEY : "0x",
     ),
-    transport: (config) => {
-      return custom({
-        request: async ({ method, params }) => {
-          console.log("LOG", method, params);
-          return await http()(config).request({ method, params });
-        },
-      })(config);
+    defaultChain: sepolia,
+    transports: {
+      [sepolia.id]: (config) => {
+        return custom({
+          request: async ({ method, params }) => {
+            let result: unknown;
+            try {
+              result = await http()(config).request({ method, params });
+            } finally {
+              console.log("METHOD", method, "PARAMS", params, "RESULT", result);
+            }
+            return result;
+          },
+        })(config);
+      },
     },
   });
 });
@@ -29,4 +38,6 @@ test("Metamask Wallet Test Dapp", async ({ page }) => {
     page.getByRole("heading", { name: "Active Provider" }),
   ).toBeVisible();
   await expect(page.getByText("Name: Mock Wallet")).toBeVisible();
+
+  await page.pause();
 });

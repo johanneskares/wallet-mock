@@ -1,17 +1,19 @@
 import type { BrowserContext, Page } from "@playwright/test";
 import { Wallet, createWallet } from "./createWallet";
-import { LocalAccount, Transport } from "viem";
+import { Chain, LocalAccount, Transport } from "viem";
 import { randomUUID } from "crypto";
 
 let wallets: Map<string, Wallet> = new Map();
 
 export async function installMockWallet({
   account,
-  transport,
+  transports,
+  defaultChain,
   ...params
 }: {
   account: LocalAccount;
-  transport: Transport;
+  transports: Record<number, Transport>;
+  defaultChain?: Chain;
 } & ({ page: Page } | { browserContext: BrowserContext })) {
   const browserOrPage =
     "browserContext" in params ? params.browserContext : params.page;
@@ -21,7 +23,7 @@ export async function installMockWallet({
 
   // Everytime we call installMockWallet, we create a new uuid to identify the wallet.
   const uuid = randomUUID();
-  wallets.set(uuid, createWallet(account, transport));
+  wallets.set(uuid, createWallet(account, transports, defaultChain));
 
   await browserOrPage.addInitScript(
     ({ uuid }) => {

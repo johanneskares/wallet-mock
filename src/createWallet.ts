@@ -4,13 +4,19 @@ import {
   Transport,
   createWalletClient,
   fromHex,
+  type Chain,
+  http,
 } from "viem";
 import * as chains from "viem/chains";
 
 export type Wallet = ReturnType<typeof createWallet>;
 
-export function createWallet(account: LocalAccount, transport: Transport) {
-  let chainId: string | undefined;
+export function createWallet(
+  account: LocalAccount,
+  transports?: Record<number, Transport>,
+  defaultChain?: Chain,
+) {
+  let chain: Chain = defaultChain ?? getChain();
 
   return {
     request: async ({
@@ -23,8 +29,8 @@ export function createWallet(account: LocalAccount, transport: Transport) {
       try {
         const client = createWalletClient({
           account,
-          chain: getChain(chainId),
-          transport,
+          chain,
+          transport: transports?.[chain.id] ?? http(),
         });
 
         if (method === "eth_accounts" || method === "eth_requestAccounts") {
@@ -38,8 +44,10 @@ export function createWallet(account: LocalAccount, transport: Transport) {
           return [{ parentCapability: "eth_accounts" }];
         }
 
+        if (method === "wallet_getPermissions") return [];
+
         if (method === "wallet_switchEthereumChain") {
-          chainId = (params?.[0] as any).chainId;
+          chain = getChain((params?.[0] as any).chainId);
           return null;
         }
 
@@ -78,7 +86,7 @@ export function createWallet(account: LocalAccount, transport: Transport) {
   };
 }
 
-function getChain(chainIdHex: string | undefined) {
+function getChain(chainIdHex?: string) {
   if (!chainIdHex) return chains.mainnet;
 
   const chainId = fromHex(chainIdHex as Hex, "number");

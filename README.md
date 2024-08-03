@@ -18,6 +18,7 @@ import { test } from "@playwright/test";
 import { installMockWallet } from "@johanneskares/wallet-mock";
 import { privateKeyToAccount } from "viem/accounts";
 import { http } from "viem";
+import { sepolia } from "viem/chains";
 
 test.beforeEach(async ({ page }) => {
   await installMockWallet({
@@ -25,7 +26,8 @@ test.beforeEach(async ({ page }) => {
     account: privateKeyToAccount(
       "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80",
     ),
-    transport: http(),
+    defaultChain: sepolia,
+    transports: { [sepolia.id]: http() },
   });
 });
 
@@ -51,17 +53,20 @@ await installMockWallet({
   account: privateKeyToAccount(
     "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80",
   ),
-  transport: (config) => {
-    return custom({
-      request: async ({ method, params }) => {
-        // Mock only this RPC call
-        if (method === "eth_sendTransaction") {
-          return "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef";
-        }
+  defaultChain: sepolia,
+  transports: {
+    [sepolia.id]: (config) => {
+      return custom({
+        request: async ({ method, params }) => {
+          // Mock only this RPC call
+          if (method === "eth_sendTransaction") {
+            return "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef";
+          }
 
-        return await http()(config).request({ method, params });
-      },
-    })(config);
+          return await http()(config).request({ method, params });
+        },
+      })(config);
+    }
   },
 });
 ```
