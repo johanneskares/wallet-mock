@@ -9,11 +9,13 @@ export async function installMockWallet({
   account,
   transports,
   defaultChain,
+  debug,
   ...params
 }: {
   account: LocalAccount;
-  transports: Record<number, Transport>;
+  transports?: Record<number, Transport>;
   defaultChain?: Chain;
+  debug?: boolean;
 } & ({ page: Page } | { browserContext: BrowserContext })) {
   const browserOrPage =
     "browserContext" in params ? params.browserContext : params.page;
@@ -26,7 +28,7 @@ export async function installMockWallet({
   wallets.set(uuid, createWallet(account, transports, defaultChain));
 
   await browserOrPage.addInitScript(
-    ({ uuid }) => {
+    ({ uuid, debug }) => {
       // This function needs to be declared in the browser context
       function announceMockWallet() {
         const provider: EIP1193Provider = {
@@ -34,6 +36,7 @@ export async function installMockWallet({
             return await eip1193Request({
               ...request,
               uuid,
+              debug,
             });
           },
           on: () => {},
@@ -64,7 +67,7 @@ export async function installMockWallet({
         announceMockWallet();
       });
     },
-    { uuid },
+    { uuid, debug },
   );
 }
 
@@ -93,21 +96,46 @@ async function eip1193Request({
   method,
   params,
   uuid,
+  debug,
 }: {
   method: string;
   params?: Array<unknown>;
   uuid: string;
+  debug?: boolean;
 }) {
   const wallet = wallets.get(uuid);
   if (wallet == null) throw new Error("Account or transport not found");
 
-  // console.log("eip1193Request", method, params);
+  try {
+    const result = await wallet.request({
+      method,
+      params,
+    });
 
-  const result = await wallet.request({
-    method,
-    params,
-  });
-
-  // console.log("eip1193Result", result);
-  return result;
+    if (debug === true) {
+      console.log(
+        "WALLET",
+        uuid.substring(0, 8),
+        "REQUEST",
+        method,
+        params,
+        "RESULT",
+        result,
+      );
+    }
+    return result;
+  } catch (e) {
+    if (debug === true) {
+      console.log(
+        "WALLET",
+        uuid.substring(0, 8),
+        "REQUEST",
+        method,
+        params,
+        "ERROR",
+        e,
+      );
+    }
+    throw e;
+  }
 }

@@ -11,21 +11,7 @@ test.beforeEach(async ({ page }) => {
       isHex(process.env.PRIVATE_KEY) ? process.env.PRIVATE_KEY : "0x",
     ),
     defaultChain: sepolia,
-    transports: {
-      [sepolia.id]: (config) => {
-        return custom({
-          request: async ({ method, params }) => {
-            let result: unknown;
-            try {
-              result = await http()(config).request({ method, params });
-            } finally {
-              console.log("METHOD", method, "PARAMS", params, "RESULT", result);
-            }
-            return result;
-          },
-        })(config);
-      },
-    },
+    debug: true,
   });
 });
 
@@ -39,5 +25,10 @@ test("Metamask Wallet Test Dapp", async ({ page }) => {
   ).toBeVisible();
   await expect(page.getByText("Name: Mock Wallet")).toBeVisible();
 
-  await page.pause();
+  await page.locator("#personalSign").click();
+  await expect(
+    page.getByText(
+      "0x7ac0fa03981bf136329ffaa21aed4f0ac7fa9a4837e966f16c5bf8783be7e43f41afe27bc4fb75",
+    ),
+  ).toBeVisible();
 });
