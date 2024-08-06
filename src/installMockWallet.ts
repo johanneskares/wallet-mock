@@ -6,26 +6,35 @@ import { randomUUID } from "crypto";
 let wallets: Map<string, Wallet> = new Map();
 
 export async function installMockWallet({
-  account,
-  transports,
-  defaultChain,
   debug,
   ...params
 }: {
-  account: LocalAccount;
-  transports?: Record<number, Transport>;
-  defaultChain?: Chain;
   debug?: boolean;
-} & ({ page: Page } | { browserContext: BrowserContext })) {
+} & ({ page: Page } | { browserContext: BrowserContext }) &
+  (
+    | {
+        account: LocalAccount;
+        transports?: Record<number, Transport>;
+        defaultChain?: Chain;
+      }
+    | {
+        wallet: Wallet;
+      }
+  )) {
   const browserOrPage =
     "browserContext" in params ? params.browserContext : params.page;
+
+  const wallet: Wallet =
+    "wallet" in params
+      ? params.wallet
+      : createWallet(params.account, params.transports, params.defaultChain);
 
   // Connecting the browser context to the Node.js playwright context
   await browserOrPage.exposeFunction("eip1193Request", eip1193Request);
 
   // Everytime we call installMockWallet, we create a new uuid to identify the wallet.
   const uuid = randomUUID();
-  wallets.set(uuid, createWallet(account, transports, defaultChain));
+  wallets.set(uuid, wallet);
 
   await browserOrPage.addInitScript(
     ({ uuid, debug }) => {
