@@ -78,7 +78,7 @@ export function createWallet(
         return await client.sendTransaction({
           to: (params?.[0] as any).to,
           data: (params?.[0] as any).data,
-          value: (params?.[0] as any).value,
+          value: (params?.[0] as any).value ? bigint((params?.[0] as any).value) : undefined,
           // Let viem handle the gas calcutation
           // gas: (params?.[0] as any).gas ?? (params?.[0] as any).gasLimit,
           // gasPrice: (params?.[0] as any).gasPrice,
